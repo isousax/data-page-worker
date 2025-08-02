@@ -40,9 +40,16 @@ export async function ConsultDataForm(request: Request, env: Env): Promise<Respo
 
             const parsed = JSON.parse(dataForm.form_data as string);
 
+            const headers = new Headers();
+            headers.set("Content-Type", "application/json");
+            headers.set("Cache-Control", "public, max-age=2592000");
+            headers.set("Access-Control-Allow-Origin", "*");
+            headers.set("Access-Control-Allow-Methods", "GET");
+            headers.set("Access-Control-Allow-Headers", "Content-Type");
+
             return new Response(
                 JSON.stringify(parsed),
-                { status: 200, headers: jsonHeader }
+                { status: 200, headers: headers }
             );
         }
         else {
