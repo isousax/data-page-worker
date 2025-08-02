@@ -1,26 +1,31 @@
-import { fromHono } from "chanfana";
-import { Hono } from "hono";
-import { TaskCreate } from "./endpoints/taskCreate";
-import { TaskDelete } from "./endpoints/taskDelete";
-import { TaskFetch } from "./endpoints/taskFetch";
-import { TaskList } from "./endpoints/taskList";
+import type { D1Database } from "@cloudflare/workers-types";
+import { ConsultDataForm } from "./endpoints/ConsultDataForm";
 
-// Start a Hono app
-const app = new Hono<{ Bindings: Env }>();
+export interface Env {
+	DB: D1Database;
+}
 
-// Setup OpenAPI registry
-const openapi = fromHono(app, {
-	docs_url: "/",
-});
+export default {
+	async fetch(request: Request, env: Env): Promise<Response> {
+		const { pathname } = new URL(request.url);
 
-// Register OpenAPI endpoints
-openapi.get("/api/tasks", TaskList);
-openapi.post("/api/tasks", TaskCreate);
-openapi.get("/api/tasks/:taskSlug", TaskFetch);
-openapi.delete("/api/tasks/:taskSlug", TaskDelete);
+		if (request.method === "GET" && pathname === "/data/consult") {
+			return await ConsultDataForm(request, env);
+		}
 
-// You may also register routes for non OpenAPI directly on Hono
-// app.get('/test', (c) => c.text('Hono!'))
+		if (request.method === "OPTIONS") {
+			return new Response(null, {
+				headers: {
+					"Access-Control-Allow-Origin": "*",
+					"Access-Control-Allow-Methods": "POST, OPTIONS, GET",
+					"Access-Control-Allow-Headers": "Content-Type"
+				}
+			});
+		}
 
-// Export the Hono app
-export default app;
+		return new Response(
+			JSON.stringify({ status: 404, message: "Not Found." }),
+			{ status: 404, headers: { "Content-Type": "application/json" } }
+		);
+	},
+};
