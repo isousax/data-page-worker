@@ -38,8 +38,10 @@ export async function ConsultDataForm(request: Request, env: Env): Promise<Respo
                 );
             }
 
+            const parsed = JSON.parse(dataForm.form_data as string);
+
             return new Response(
-                JSON.stringify(dataForm),
+                JSON.stringify(parsed),
                 { status: 200, headers: jsonHeader }
             );
         }
