@@ -25,7 +25,7 @@ export async function ConsultDataForm(request: Request, env: Env): Promise<Respo
             const sql = `
                 SELECT form_data
                 FROM ${tableName}
-                WHERE id = ?
+                WHERE intention_id = ?
             `;
 
             const dataForm = await env.DB.prepare(sql).bind(id).first();
