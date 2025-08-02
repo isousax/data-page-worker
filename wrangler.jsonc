@@ -1,0 +1,9 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "dedicart-data-page-worker",
+	"main": "src/index.ts",
+	"compatibility_date": "2025-08-02",
+	"observability": {
+		"enabled": true
+	}
+}
