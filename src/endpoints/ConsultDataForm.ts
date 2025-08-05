@@ -2,13 +2,6 @@ import type { Env } from "../index";
 import { prefixLabels } from "../util/prefixLabels";
 
 export async function ConsultDataForm(request: Request, env: Env): Promise<Response> {
-    const jsonHeader = {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET",
-        "Access-Control-Allow-Headers": "Content-Type"
-    };
-
     try {
         const uri = new URL(request.url);
 
@@ -19,7 +12,7 @@ export async function ConsultDataForm(request: Request, env: Env): Promise<Respo
             if (!tableName) {
                 return new Response(
                     JSON.stringify({ message: "ID inválido." }),
-                    { status: 400, headers: jsonHeader }
+                    { status: 400, headers: createJsonHeaders(false) }
                 );
             }
             const sql = `
@@ -34,28 +27,21 @@ export async function ConsultDataForm(request: Request, env: Env): Promise<Respo
                 console.info(`Dados do ${id} encontrado`);
                 return new Response(
                     JSON.stringify({ message: "Dados não encontrado." }),
-                    { status: 404, headers: jsonHeader }
+                    { status: 404, headers: createJsonHeaders(false) }
                 );
             }
 
             const parsed = JSON.parse(dataForm.form_data as string);
 
-            const headers = new Headers();
-            headers.set("Content-Type", "application/json");
-            headers.set("Cache-Control", "public, max-age=2592000");
-            headers.set("Access-Control-Allow-Origin", "*");
-            headers.set("Access-Control-Allow-Methods", "GET");
-            headers.set("Access-Control-Allow-Headers", "Content-Type");
-
             return new Response(
                 JSON.stringify(parsed),
-                { status: 200, headers: headers }
+                { status: 200, headers: createJsonHeaders(true) }
             );
         }
         else {
             return new Response(
                 JSON.stringify({ message: "Parâmetros da requisição malformados." }),
-                { status: 400, headers: jsonHeader }
+                { status: 400, headers: createJsonHeaders(false) }
             );
         }
     }
@@ -63,7 +49,17 @@ export async function ConsultDataForm(request: Request, env: Env): Promise<Respo
         console.error("Erro interno:", err);
         return new Response(
             JSON.stringify({ message: "Erro inesperado no servidor." }),
-            { status: 500, headers: jsonHeader }
+            { status: 500, headers: createJsonHeaders(false) }
         );
+    }
+
+    function createJsonHeaders(cache = false): Headers {
+        const headers = new Headers();
+        headers.set("Content-Type", "application/json");
+        headers.set("Access-Control-Allow-Origin", "*");
+        headers.set("Access-Control-Allow-Methods", "GET");
+        headers.set("Access-Control-Allow-Headers", "Content-Type");
+        if (cache) headers.set("Cache-Control", "public, max-age=2592000");
+        return headers;
     }
 }

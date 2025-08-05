@@ -10,7 +10,7 @@ export async function ListDedications(request: Request, env: Env, email: string)
         }
 
         const sql = `
-                SELECT final_url
+                SELECT final_url, created_at, expires_in
                 FROM intentions
                 WHERE email = ? AND status = 'approved'
                 ORDER BY created_at DESC
@@ -25,9 +25,14 @@ export async function ListDedications(request: Request, env: Env, email: string)
                 { status: 404, headers: createJsonHeaders(false) }
             );
         }
+        const dedications = data.results.map(r => ({
+            url: r.final_url,
+            expiration: r.expires_in,
+            created: r.created_at
+        }));
 
         return new Response(
-            JSON.stringify({ dedications: data.results.map(r => r.final_url) }),
+            JSON.stringify({ dedications }),
             { status: 200, headers: createJsonHeaders(true) }
         );
     }
