@@ -1,5 +1,6 @@
 import type { D1Database } from "@cloudflare/workers-types";
 import { ConsultDataForm } from "./endpoints/ConsultDataForm";
+import { ListDedications } from "./endpoints/ListDedications";
 
 export interface Env {
 	DB: D1Database;
@@ -11,6 +12,11 @@ export default {
 
 		if (request.method === "GET" && pathname === "/data/consult") {
 			return await ConsultDataForm(request, env);
+		}
+
+		if (request.method === "GET" && pathname.startsWith("/users/") && pathname.endsWith("/dedications")) {
+			const email = decodeURIComponent(pathname.split("/")[2]);
+			return await ListDedications(request, env, email);
 		}
 
 		if (request.method === "OPTIONS") {
