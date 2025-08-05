@@ -27,8 +27,8 @@ export async function ListDedications(request: Request, env: Env, email: string)
         }
         const dedications = data.results.map(r => ({
             url: r.final_url,
-            expiration: r.expires_in,
-            created: r.created_at
+            created: r.created_at,
+            expiration: r.expires_in
         }));
 
         return new Response(
