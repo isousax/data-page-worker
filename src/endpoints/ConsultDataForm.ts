@@ -16,7 +16,7 @@ export async function ConsultDataForm(request: Request, env: Env): Promise<Respo
                 );
             }
             const sql = `
-                SELECT form_data
+                SELECT form_data, status
                 FROM ${tableName}
                 WHERE intention_id = ?
             `;
@@ -28,6 +28,14 @@ export async function ConsultDataForm(request: Request, env: Env): Promise<Respo
                 return new Response(
                     JSON.stringify({ message: "Dados não encontrado." }),
                     { status: 404, headers: createJsonHeaders(false) }
+                );
+            }
+            
+            if (dataForm.status != "approved") {
+                console.info(`Pagamento do ${id} não aprovado`);
+                return new Response(
+                    JSON.stringify({ message: "Pagamento não aprovado." }),
+                    { status: 403, headers: createJsonHeaders(false) }
                 );
             }
 
