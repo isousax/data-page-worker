@@ -10,7 +10,7 @@ export async function ListDedications(request: Request, env: Env, email: string)
         }
 
         const sql = `
-                SELECT final_url, created_at, expires_in
+                SELECT final_url, created_at, expires_in, qr_code
                 FROM intentions
                 WHERE email = ? AND status = 'approved'
                 ORDER BY created_at DESC
@@ -28,7 +28,8 @@ export async function ListDedications(request: Request, env: Env, email: string)
         const dedications = data.results.map(r => ({
             url: r.final_url,
             created: r.created_at,
-            expiration: r.expires_in
+            expiration: r.expires_in,
+            qrCode: r?.qr_code
         }));
 
         return new Response(
