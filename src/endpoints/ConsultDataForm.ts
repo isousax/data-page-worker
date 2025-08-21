@@ -20,8 +20,17 @@ export async function ConsultDataForm(
         });
       }
 
-      if (!validateApiKey(request.headers.get("Authorization")?.split(" ")[1] || "", env)) {
-        console.info(`Token inválido - Request Token: ${request.headers.get("Authorization")?.split(" ")[1] || ""} - Env Token: ${env.WORKER_API_KEY}`);
+      if (
+        !validateApiKey(
+          request.headers.get("Authorization")?.split(" ")[1] || "",
+          env
+        )
+      ) {
+        console.info(
+          `Token inválido - Request Token: ${
+            request.headers.get("Authorization")?.split(" ")[1] || ""
+          } - Env Token: ${env.WORKER_API_KEY}`
+        );
         return new Response(JSON.stringify({ message: "Token inválido." }), {
           status: 401,
           headers: createJsonHeaders(false),

@@ -1,4 +1,5 @@
 import type { Env } from "../index";
+import { validateApiKey } from "../util/validateApiKey";
 
 export async function ListDedications(request: Request, env: Env, email: string): Promise<Response> {
     try {
@@ -8,6 +9,14 @@ export async function ListDedications(request: Request, env: Env, email: string)
                 { status: 400, headers: createJsonHeaders(false) }
             );
         }
+
+        if (!validateApiKey(request.headers.get("Authorization")?.split(" ")[1] || "", env)) {
+                console.info(`Token inválido - Request Token: ${request.headers.get("Authorization")?.split(" ")[1] || ""} - Env Token: ${env.WORKER_API_KEY}`);
+                return new Response(JSON.stringify({ message: "Token inválido." }), {
+                  status: 401,
+                  headers: createJsonHeaders(false),
+                });
+              }
 
         const sql = `
                 SELECT final_url, created_at, expires_in, qr_code
