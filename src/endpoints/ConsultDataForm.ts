@@ -67,7 +67,7 @@ export async function ConsultDataForm(request: Request, env: Env): Promise<Respo
         headers.set("Access-Control-Allow-Origin", "*");
         headers.set("Access-Control-Allow-Methods", "GET");
         headers.set("Access-Control-Allow-Headers", "Content-Type");
-        if (cache) headers.set("Cache-Control", "public, max-age=2592000");
+        if (cache) headers.set("Cache-Control", "public, max-age=604800");
         return headers;
     }
 }
