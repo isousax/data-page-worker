@@ -4,6 +4,7 @@ import { ListDedications } from "./endpoints/ListDedications";
 
 export interface Env {
 	DB: D1Database;
+	WORKER_API_KEY: string;
 }
 
 export default {

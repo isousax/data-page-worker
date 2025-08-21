@@ -1,5 +1,6 @@
 import type { Env } from "../index";
 import { prefixLabels } from "../util/prefixLabels";
+import { validateApiKey } from "../util/validateApiKey";
 
 export async function ConsultDataForm(
   request: Request,
@@ -18,6 +19,14 @@ export async function ConsultDataForm(
           headers: createJsonHeaders(false),
         });
       }
+
+      if (!validateApiKey(request.headers.get("Authorization")?.split(" ")[1] || "", env)) {
+        return new Response(JSON.stringify({ message: "Token inválido." }), {
+          status: 401,
+          headers: createJsonHeaders(false),
+        });
+      }
+
       const sql = `
                 SELECT form_data, status
                 FROM ${tableName}
