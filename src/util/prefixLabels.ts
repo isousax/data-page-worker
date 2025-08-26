@@ -1,5 +1,6 @@
 const prefixMap: Record<string, string> = {
-    P: "nossa_historia"
+    P: "nossa_historia",
+    I: "infinito_particular"
 };
 
 export function prefixLabels(intentionId: string): string | null {
