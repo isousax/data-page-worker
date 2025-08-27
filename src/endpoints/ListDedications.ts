@@ -21,7 +21,7 @@ export async function ListDedications(request: Request, env: Env, email: string)
         const sql = `
                 SELECT final_url, created_at, expires_in, qr_code
                 FROM intentions
-                WHERE email = ? AND status = 'approved'
+                WHERE email = ? AND status IN ('approved', 'expired')
                 ORDER BY created_at DESC
             `;
 
