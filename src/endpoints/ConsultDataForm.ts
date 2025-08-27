@@ -11,8 +11,9 @@ export async function ConsultDataForm(
 
     if (uri.searchParams.has("id")) {
       const id = uri.searchParams.get("id");
+      const templatePreviewId = uri.searchParams.get("template_id");
 
-      const tableName = prefixLabels(id);
+      const tableName = prefixLabels(id) || templatePreviewId;
       if (!tableName) {
         return new Response(JSON.stringify({ message: "ID inválido." }), {
           status: 400,
@@ -59,6 +60,17 @@ export async function ConsultDataForm(
           JSON.stringify({ message: "Pagamento expirado." }),
           { status: 410, headers: createJsonHeaders(false) }
         );
+      }
+
+      if (id.startsWith("PREVIEW-")) {
+        console.info(`Dedicatória ${id} é uma prévia`);
+
+        const parsed = JSON.parse(dataForm.form_data as string);
+
+        return new Response(JSON.stringify(parsed), {
+          status: 200,
+          headers: createJsonHeaders(false),
+        });
       }
 
       if (dataForm.status != "approved") {
